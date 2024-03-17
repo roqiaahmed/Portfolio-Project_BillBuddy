@@ -1,11 +1,14 @@
 require("dotenv").config();
+require("express-async-errors");
 
 const express = require("express");
 const connectDb = require("./db/connect");
+const router = require("./routes/index");
 
 const app = express();
 
 app.use(express.json());
+app.use("/api/v1", router);
 
 app.get("/", (req, res) => {
   res.send("hi");
