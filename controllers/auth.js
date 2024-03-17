@@ -11,10 +11,7 @@ const register = async (req, res) => {
   }
   try {
     const user = await User.create({ email, password, name });
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_TOKEN, {
-      expiresIn: "7d",
-    });
-    res.status(201).json({ user: user._id, token, user: user.password });
+    res.status(201).json({ msg: "User created" });
   } catch (error) {
     console.log(error);
   }
@@ -30,7 +27,7 @@ const login = async (req, res) => {
     if (!user) {
       return res.status(404).json({ msg: "unouth" });
     }
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(404).json({ msg: "password not match" });
     }
@@ -48,4 +45,22 @@ const getUser = async (req, res) => {
   res.status(200).json({ user });
 };
 
-module.exports = { register, login, getUser };
+const updateUser = async (req, res) => {
+  const { name, email, password } = req.body;
+  if (name === "" || email === "" || password === "") {
+    return res
+      .status(400)
+      .json({ msg: "Please provide name, email and password" });
+  }
+  const user = await User.findByIdAndUpdate(req.userId, req.body, {
+    new: true,
+  });
+  res.status(200).json({ user });
+};
+
+const deleteUser = async (req, res) => {
+  await User.findByIdAndDelete(req.userId);
+  res.status(200).json({ msg: "User deleted" });
+};
+
+module.exports = { register, login, getUser, updateUser, deleteUser };
