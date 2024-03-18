@@ -5,10 +5,11 @@ const propertySchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "User is required"],
+      required: [true, "UserId is required"],
     },
     name: {
       type: String,
+      unique: true,
       required: [true, "Name is required"],
       minlength: [3, "Minimum length is 3 characters"],
     },
