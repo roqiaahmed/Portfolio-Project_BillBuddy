@@ -12,7 +12,7 @@ const serviceSchema = new mongoose.Schema(
       required: [true, "Name is required"],
       minlength: [3, "Minimum length is 3 characters"],
     },
-    info: {
+    details: {
       type: String,
       required: false,
       minlength: [10, "Minimum length is 10 characters"],
