@@ -5,7 +5,7 @@ const { uploadFiles, deleteFile } = require("../utils/uploadUtil");
 const getServices = async (req, res) => {
   const propertyId = req.params.propertyId;
   const { name } = req.query;
-  let queryObject = {
+  const queryObject = {
     propertyId,
   };
   if (name) {

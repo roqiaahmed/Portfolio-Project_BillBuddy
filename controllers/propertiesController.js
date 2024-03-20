@@ -3,7 +3,7 @@ const Service = require("../models/Services");
 
 const getUserProperties = async (req, res) => {
   const { name } = req.query;
-  let queryObject = {
+  const queryObject = {
     userId: req.userId,
   };
   if (name) {
