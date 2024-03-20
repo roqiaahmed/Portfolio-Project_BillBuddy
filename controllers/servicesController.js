@@ -1,4 +1,5 @@
 const Service = require("../models/Services");
+const Task = require("../models/task");
 const { uploadFiles, deleteFile } = require("../utils/uploadUtil");
 
 const getServices = async (req, res) => {
@@ -84,6 +85,12 @@ const deleteService = async (req, res) => {
     });
     if (!service) {
       return res.status(404).send("Service not found");
+    }
+    const tasksCount = await Task.countDocuments({ serviceId });
+    if (tasksCount > 0) {
+      return res
+        .status(400)
+        .json({ msg: "Cannot delete service with associated tasks." });
     }
     if (service.images.length > 0) {
       service.images.forEach(async (image) => {

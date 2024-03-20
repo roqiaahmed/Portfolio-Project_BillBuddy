@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const taskSchema = new mongoose.Schema(
   {
-    servicesId: {
+    serviceId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Services",
       required: [true, "Services is required"],
