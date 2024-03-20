@@ -4,8 +4,15 @@ const { uploadFiles, deleteFile } = require("../utils/uploadUtil");
 
 const getServices = async (req, res) => {
   const propertyId = req.params.propertyId;
+  const { name } = req.query;
+  let queryObject = {
+    propertyId,
+  };
+  if (name) {
+    queryObject.name = { $regex: name };
+  }
   try {
-    const services = await Service.find({ propertyId });
+    const services = await Service.find(queryObject).sort({ name: 1 });
     res.status(200).json({ count: services.length, services });
   } catch (error) {
     console.error("Error getting services:", error);
