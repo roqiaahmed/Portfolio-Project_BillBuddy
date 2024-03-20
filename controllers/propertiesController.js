@@ -1,4 +1,5 @@
 const Property = require("../models/property");
+const Service = require("../models/Services");
 
 const getUserProperties = async (req, res) => {
   const { name } = req.query;
@@ -10,7 +11,7 @@ const getUserProperties = async (req, res) => {
   }
   try {
     const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 2;
+    const limit = Number(req.query.limit) || 5;
     const skip = (page - 1) * limit;
 
     const properties = await Property.find(queryObject).limit(limit).skip(skip);
@@ -64,11 +65,23 @@ const updateProperty = async (req, res) => {
 
 const deleteProperty = async (req, res) => {
   const { propertyId } = req.params;
-  const property = await Property.findOneAndDelete({ _id: propertyId });
+  const property = await Property.findById(propertyId);
   if (!property) {
     res.status(404).send({ msg: `no property with this id ${propertyId}` });
   }
-  res.status(200).json({ msg: "property deleted successfully" });
+  try {
+    const servicesCount = await Service.countDocuments({ propertyId });
+    if (servicesCount > 0) {
+      res
+        .status(400)
+        .json({ msg: "Cannot delete property with associated services." });
+    }
+
+    await property.deleteOne();
+    res.status(200).json({ msg: "property deleted successfully" });
+  } catch (error) {
+    console.log({ error });
+  }
 };
 
 module.exports = {

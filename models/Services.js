@@ -15,7 +15,6 @@ const serviceSchema = new mongoose.Schema(
     details: {
       type: String,
       required: false,
-      minlength: [10, "Minimum length is 10 characters"],
       default: "No info available",
     },
     images: [String],
