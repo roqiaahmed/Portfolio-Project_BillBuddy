@@ -1,4 +1,4 @@
-const Service = require("../models/services");
+const Service = require("../models/Services");
 const { uploadFiles, deleteFile } = require("../utils/uploadUtil");
 
 const getServices = async (req, res) => {
