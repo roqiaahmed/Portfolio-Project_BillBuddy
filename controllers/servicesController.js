@@ -2,7 +2,7 @@ const Service = require("../models/Services");
 const Task = require("../models/task");
 const { uploadFiles, deleteFile } = require("../utils/uploadUtil");
 
-const getServices = async (req, res) => {
+const getAllServices = async (req, res) => {
   const propertyId = req.params.propertyId;
   const { name } = req.query;
   const queryObject = {
@@ -114,7 +114,7 @@ const deleteService = async (req, res) => {
 };
 
 module.exports = {
-  getServices,
+  getAllServices,
   createService,
   getService,
   updateService,
