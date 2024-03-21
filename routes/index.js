@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
+// Import the controllers
+
+// authController.js
 const {
   register,
   login,
@@ -9,6 +12,7 @@ const {
   deleteUser,
 } = require("../controllers/authController");
 
+// userController.js
 const {
   getUserProperties,
   createProperty,
@@ -17,6 +21,7 @@ const {
   deleteProperty,
 } = require("../controllers/propertiesController");
 
+// servicesController.js
 const {
   getAllServices,
   createService,
@@ -25,6 +30,7 @@ const {
   deleteService,
 } = require("../controllers/servicesController");
 
+// taskController.js
 const {
   getAllTasks,
   createTask,
@@ -32,6 +38,15 @@ const {
   updateTask,
   deleteTask,
 } = require("../controllers/taskController");
+
+// actionController.js
+const {
+  getAllActions,
+  createAction,
+  getAction,
+  updateAction,
+  deleteAction,
+} = require("../controllers/actionController");
 
 const verifyToken = require("../middleware/authMiddleware");
 const uploadMiddleware = require("../middleware/uploadMiddelware");
@@ -79,4 +94,19 @@ router
   .get(verifyToken, getTask)
   .put(verifyToken, updateTask)
   .delete(verifyToken, deleteTask);
+
+// action.js
+router
+  .route("/properties/:propertyId/services/:serviceId/tasks/:taskId/actions")
+  .get(verifyToken, getAllActions)
+  .post(verifyToken, uploadMiddleware, createAction);
+
+router
+  .route(
+    "/properties/:propertyId/services/:serviceId/tasks/:taskId/actions/:actionId"
+  )
+  .get(verifyToken, getAction)
+  .put(verifyToken, uploadMiddleware, updateAction)
+  .delete(verifyToken, deleteAction);
+
 module.exports = router;

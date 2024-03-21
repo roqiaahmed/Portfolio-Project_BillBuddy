@@ -27,7 +27,8 @@ const createService = async (req, res) => {
     name,
     details,
   };
-  const files = await uploadFiles(req, res);
+  const path = name;
+  const files = await uploadFiles(req, res, path);
   if (files) {
     const images = files.map((url) => url);
     newService.images = images;
@@ -66,7 +67,8 @@ const updateService = async (req, res) => {
     name,
     details,
   };
-  const files = await uploadFiles(req, res);
+  const path = name;
+  const files = await uploadFiles(req, res, path);
   if (files) {
     const images = files.map((url) => url);
     service.images = images;
@@ -99,10 +101,10 @@ const deleteService = async (req, res) => {
         .status(400)
         .json({ msg: "Cannot delete service with associated tasks." });
     }
-    if (service.images.length > 0) {
+    if (service.images && service.images.length > 0) {
       service.images.forEach(async (image) => {
-        console.log("Deleting image:", image, "\n");
-        await deleteFile(image);
+        const path = service.name;
+        await deleteFile(image, path);
       });
     }
     await service.deleteOne({ _id: serviceId });

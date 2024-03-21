@@ -1,5 +1,6 @@
 const Task = require("../models/task");
 const Service = require("../models/Services");
+const Action = require("../models/action");
 const cron = require("node-cron");
 const { sendNotification } = require("../utils/notificationService");
 
@@ -137,6 +138,12 @@ const deleteTask = async (req, res) => {
   const oldTask = await Task.findOne({ _id: taskId, serviceId });
   if (!oldTask) {
     return res.status(404).send("Task not found");
+  }
+  const actionCount = await Action.countDocuments({ serviceId });
+  if (actionCount > 0) {
+    return res
+      .status(400)
+      .json({ msg: "Cannot delete task with associated actions." });
   }
   if (oldTask.jobId) {
     cron.getTasks().forEach((task) => {
