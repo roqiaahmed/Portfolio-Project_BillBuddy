@@ -10,7 +10,7 @@ function getFileNameFromUrl(fileUrl) {
   return filename;
 }
 
-async function uploadFiles(req, res) {
+async function uploadFiles(req, res, folderPath) {
   try {
     if (!req.files || req.files.length === 0) {
       return;
@@ -19,7 +19,9 @@ async function uploadFiles(req, res) {
     const bucket = admin.storage().bucket();
 
     const uploadPromises = req.files.map(async (file) => {
-      const fileUpload = bucket.file(file.originalname);
+      const filePath = `${folderPath}/${file.originalname}`; /////// add folder path
+      const fileUpload = bucket.file(filePath);
+      // const fileUpload = bucket.file(file.originalname);
 
       // Upload each file to Firebase Storage
       await fileUpload.save(file.buffer, {
@@ -44,16 +46,17 @@ async function uploadFiles(req, res) {
   }
 }
 
-async function deleteFile(fileUrl) {
+async function deleteFile(fileUrl, folderPath) {
   const fileName = getFileNameFromUrl(fileUrl);
 
   try {
     const bucket = await admin.storage().bucket();
-    await bucket.file(fileName).delete();
+    const filePath = `${folderPath}/${fileName}`;
+    await bucket.file(filePath).delete();
     console.log(`File ${fileName} deleted successfully.`);
   } catch (error) {
     console.error(`Error deleting file ${fileName}:`, error);
-    throw error; // Rethrow the error to handle it elsewhere
+    throw new Error(`Failed to delete file ${fileName}: ${error.message}`);
   }
 }
 
