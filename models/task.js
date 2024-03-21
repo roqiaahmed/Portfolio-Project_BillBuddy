@@ -21,6 +21,10 @@ const taskSchema = new mongoose.Schema(
       type: Number,
       default: 1,
     },
+    jobId: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );

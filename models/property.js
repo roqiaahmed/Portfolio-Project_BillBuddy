@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Service = require("./Services");
 
 const propertySchema = new mongoose.Schema(
   {

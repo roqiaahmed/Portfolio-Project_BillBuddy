@@ -1,6 +1,7 @@
 require("dotenv").config();
 require("express-async-errors");
 
+const { initialize } = require("./utils/notificationService");
 const express = require("express");
 const connectDb = require("./db/connect");
 const router = require("./routes/index");
@@ -26,8 +27,9 @@ const PORT = process.env.PORT || 3000;
 const start = async () => {
   await connectDb(process.env.MONGO_URI);
 
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(`server is running on ${PORT} ...`);
   });
+  initialize(server);
 };
 start();
