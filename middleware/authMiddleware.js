@@ -1,10 +1,13 @@
 const jwt = require("jsonwebtoken");
 
+const { UnauthenticatedError } = require("../errors/index");
+const verifyproperty = require("../utils/verifyproperty");
+
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization;
 
   if (!token || !token.startsWith("Bearer")) {
-    return res.status(401).json({ msg: "unauthorized" });
+    throw new UnauthenticatedError("No token provided");
   }
 
   try {
@@ -12,8 +15,18 @@ const verifyToken = (req, res, next) => {
     req.userId = decoded.userId;
     next();
   } catch (error) {
-    return res.status(401).json({ msg: "unauthorized", error });
+    throw new UnauthenticatedError("Not authorized to access this route");
   }
 };
 
-module.exports = verifyToken;
+const authorized = async (req, res, next) => {
+  const { propertyId } = req.params;
+  const { userId } = req;
+  const property = await verifyproperty(userId, propertyId);
+  if (!property) {
+    throw new UnauthenticatedError("Not authorized to access this route");
+  }
+  next();
+};
+
+module.exports = { verifyToken, authorized };

@@ -48,7 +48,7 @@ const {
   deleteAction,
 } = require("../controllers/actionController");
 
-const verifyToken = require("../middleware/authMiddleware");
+const { verifyToken, authorized } = require("../middleware/authMiddleware");
 const uploadMiddleware = require("../middleware/uploadMiddelware");
 
 // auth.js
@@ -69,44 +69,44 @@ router
   .post(verifyToken, createProperty);
 router
   .route("/properties/:propertyId")
-  .get(verifyToken, getProperty)
-  .put(verifyToken, updateProperty)
-  .delete(verifyToken, deleteProperty);
+  .get(verifyToken, authorized, getProperty)
+  .put(verifyToken, authorized, updateProperty)
+  .delete(verifyToken, authorized, deleteProperty);
 
 // services.js
 router
   .route("/properties/:propertyId/services")
-  .get(verifyToken, getAllServices)
-  .post(verifyToken, uploadMiddleware, createService);
+  .get(verifyToken, authorized, getAllServices)
+  .post(verifyToken, authorized, uploadMiddleware, createService);
 router
   .route("/properties/:propertyId/services/:serviceId")
-  .get(verifyToken, getService)
-  .put(verifyToken, uploadMiddleware, updateService)
-  .delete(verifyToken, deleteService);
+  .get(verifyToken, authorized, getService)
+  .put(verifyToken, authorized, uploadMiddleware, updateService)
+  .delete(verifyToken, authorized, deleteService);
 
 // task.js
 router
   .route("/properties/:propertyId/services/:serviceId/tasks")
-  .get(verifyToken, getAllTasks)
-  .post(verifyToken, createTask);
+  .get(verifyToken, authorized, getAllTasks)
+  .post(verifyToken, authorized, createTask);
 router
   .route("/properties/:propertyId/services/:serviceId/tasks/:taskId")
-  .get(verifyToken, getTask)
-  .put(verifyToken, updateTask)
-  .delete(verifyToken, deleteTask);
+  .get(verifyToken, authorized, getTask)
+  .put(verifyToken, authorized, updateTask)
+  .delete(verifyToken, authorized, deleteTask);
 
 // action.js
 router
   .route("/properties/:propertyId/services/:serviceId/tasks/:taskId/actions")
-  .get(verifyToken, getAllActions)
-  .post(verifyToken, uploadMiddleware, createAction);
+  .get(verifyToken, authorized, getAllActions)
+  .post(verifyToken, authorized, uploadMiddleware, createAction);
 
 router
   .route(
     "/properties/:propertyId/services/:serviceId/tasks/:taskId/actions/:actionId"
   )
-  .get(verifyToken, getAction)
-  .put(verifyToken, uploadMiddleware, updateAction)
-  .delete(verifyToken, deleteAction);
+  .get(verifyToken, authorized, getAction)
+  .put(verifyToken, authorized, uploadMiddleware, updateAction)
+  .delete(verifyToken, authorized, deleteAction);
 
 module.exports = router;

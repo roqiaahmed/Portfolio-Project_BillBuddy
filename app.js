@@ -4,8 +4,15 @@ require("express-async-errors");
 const { initialize } = require("./utils/notificationService");
 const express = require("express");
 const connectDb = require("./db/connect");
+
+//router
 const router = require("./routes/index");
+
 const admin = require("firebase-admin");
+
+//error handling middleware
+const notFoundMiddleware = require("./middleware/not-found");
+const errorHandlerMiddleware = require("./middleware/error-handler");
 
 const app = express();
 
@@ -21,6 +28,10 @@ app.use("/api/v1", router);
 app.get("/", (req, res) => {
   res.send("hi");
 });
+
+//error handling middleware
+app.use(notFoundMiddleware);
+app.use(errorHandlerMiddleware);
 
 const PORT = process.env.PORT || 3000;
 
