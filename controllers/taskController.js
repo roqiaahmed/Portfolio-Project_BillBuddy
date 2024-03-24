@@ -1,9 +1,9 @@
-const Task = require("../models/task");
-const Service = require("../models/Services");
-const Action = require("../models/action");
-const cron = require("node-cron");
-const { sendNotification } = require("../utils/notificationService");
-const { StatusCodes } = require("http-status-codes");
+const Task = require('../models/task');
+const Service = require('../models/Services');
+const Action = require('../models/action');
+const cron = require('node-cron');
+const { sendNotification } = require('../utils/notificationService');
+const { StatusCodes } = require('http-status-codes');
 
 const getAllTasks = async (req, res) => {
   const { serviceId } = req.params;
@@ -23,7 +23,7 @@ const getAllTasks = async (req, res) => {
   const skip = (page - 1) * limit;
 
   const tasks = await Task.find(queryObject)
-    .sort("reminderDay")
+    .sort('reminderDay')
     .limit(limit)
     .skip(skip);
 
@@ -51,7 +51,7 @@ const createTask = async (req, res) => {
   let job = null;
   if (reminde) {
     job = cron.schedule(`*/${reminderDay} * * * *`, () => {
-      sendNotification(`${serviceName} - ${name}`);
+      sendNotification(req.userId, `${serviceName} - ${name}`);
     });
     job.start();
   }
@@ -69,7 +69,7 @@ const getTask = async (req, res) => {
 
   const task = await Task.findOne({ _id: taskId, serviceId });
   if (!task) {
-    return res.status(StatusCodes.NOT_FOUND).send("Task not found");
+    return res.status(StatusCodes.NOT_FOUND).send('Task not found');
   }
   res.status(StatusCodes.OK).json({ task });
 };
@@ -78,9 +78,9 @@ const updateTask = async (req, res) => {
   const { serviceId, taskId } = req.params;
   const { name } = req.body;
   const oldTask = await Task.findOne({ _id: taskId, serviceId });
-  console.log("oldTask", oldTask);
+  console.log('oldTask', oldTask);
   if (!oldTask) {
-    return res.status(StatusCodes.NOT_FOUND).send("Task not found");
+    return res.status(StatusCodes.NOT_FOUND).send('Task not found');
   }
   const service = await Service.findOne({ _id: serviceId });
   const serviceName = service.name;
@@ -94,7 +94,7 @@ const updateTask = async (req, res) => {
   };
   if (reminde) {
     const job = cron.schedule(`*/${reminderDay} * * * *`, () => {
-      sendNotification(`${serviceName} - ${name}`);
+      sendNotification(req.userId, `${serviceName} - ${name}`);
     });
     if (oldTask.jobId) {
       cron.getTasks().forEach((task) => {
@@ -117,20 +117,20 @@ const updateTask = async (req, res) => {
   });
   res
     .status(StatusCodes.OK)
-    .json({ msg: "task updated successfully", task: updated });
+    .json({ msg: 'task updated successfully', task: updated });
 };
 
 const deleteTask = async (req, res) => {
   const { serviceId, taskId } = req.params;
   const oldTask = await Task.findOne({ _id: taskId, serviceId });
   if (!oldTask) {
-    return res.status(StatusCodes.NOT_FOUND).send("Task not found");
+    return res.status(StatusCodes.NOT_FOUND).send('Task not found');
   }
   const actionCount = await Action.countDocuments({ serviceId });
   if (actionCount > 0) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "Cannot delete task with associated actions." });
+      .json({ msg: 'Cannot delete task with associated actions.' });
   }
   if (oldTask.jobId) {
     cron.getTasks().forEach((task) => {
@@ -140,7 +140,7 @@ const deleteTask = async (req, res) => {
     });
   }
   await oldTask.deleteOne({ _id: taskId });
-  res.status(StatusCodes.OK).json({ msg: "task deleted successfully" });
+  res.status(StatusCodes.OK).json({ msg: 'task deleted successfully' });
 };
 module.exports = {
   getAllTasks,
