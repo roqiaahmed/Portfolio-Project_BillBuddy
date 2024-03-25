@@ -86,11 +86,11 @@ router
 
 // task.js
 router
-  .route('/properties/:propertyId/services/:serviceId/tasks')
+  .route('/services/:serviceId/tasks')
   .get(verifyToken, authorized, getAllTasks)
   .post(verifyToken, authorized, createTask);
 router
-  .route('/properties/:propertyId/services/:serviceId/tasks/:taskId')
+  .route('/tasks/:taskId')
   .get(verifyToken, authorized, getTask)
   .put(verifyToken, authorized, updateTask)
   .delete(verifyToken, authorized, deleteTask);

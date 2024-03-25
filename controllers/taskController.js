@@ -65,9 +65,9 @@ const createTask = async (req, res) => {
   res.send({ newTask });
 };
 const getTask = async (req, res) => {
-  const { serviceId, taskId } = req.params;
+  const { taskId } = req.params;
 
-  const task = await Task.findOne({ _id: taskId, serviceId });
+  const task = await Task.findOne({ _id: taskId });
   if (!task) {
     return res.status(StatusCodes.NOT_FOUND).send('Task not found');
   }
@@ -75,14 +75,13 @@ const getTask = async (req, res) => {
 };
 
 const updateTask = async (req, res) => {
-  const { serviceId, taskId } = req.params;
+  const { taskId } = req.params;
   const { name } = req.body;
-  const oldTask = await Task.findOne({ _id: taskId, serviceId });
-  console.log('oldTask', oldTask);
+  const oldTask = await Task.findOne({ _id: taskId });
   if (!oldTask) {
     return res.status(StatusCodes.NOT_FOUND).send('Task not found');
   }
-  const service = await Service.findOne({ _id: serviceId });
+  const service = await Service.findOne({ _id: oldTask.serviceId });
   const serviceName = service.name;
   const reminderDay = req.body.reminderDay || oldTask.reminderDay;
   const reminde = req.body.reminde === undefined ? true : req.body.reminde;
@@ -121,12 +120,12 @@ const updateTask = async (req, res) => {
 };
 
 const deleteTask = async (req, res) => {
-  const { serviceId, taskId } = req.params;
-  const oldTask = await Task.findOne({ _id: taskId, serviceId });
+  const { taskId } = req.params;
+  const oldTask = await Task.findOne({ _id: taskId });
   if (!oldTask) {
     return res.status(StatusCodes.NOT_FOUND).send('Task not found');
   }
-  const actionCount = await Action.countDocuments({ serviceId });
+  const actionCount = await Action.countDocuments({ taskId });
   if (actionCount > 0) {
     return res
       .status(StatusCodes.BAD_REQUEST)
