@@ -48,8 +48,6 @@ Follow these steps to set up and run the BillBuddy API project:
   SERVICE_ACCOUNT="path_to_firebase.json"
   ```
 
-````
-
 4. **Run the Server**:
 
    ```bash
@@ -67,4 +65,3 @@ Authenticate requests using bearer tokens provided upon login.
 # Contributors
 
 - roqiaahmed
-````
