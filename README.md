@@ -27,26 +27,34 @@ Follow these steps to set up and run the BillBuddy API project:
 
 2. **Install Dependencies**:
 
-- cd Portfolio-Project_BillBuddy
-- npm install
+   ```bash
+   cd Portfolio-Project_BillBuddy
+   npm install
+   ```
 
 3. **Set Environment Variables**:
 
 - Create a .env file in the root directory and add the following variables:
+  ```bash
+  MONGO_URI=your_mongodb_uri
+  JWT_TOKEN_SECRET=your_jwt_token_secret
+  API_KEY=your_api_key
+  AUTH_DOMAIN=your_auth_domain
+  MEASUREMENT_ID=your_measurement_id
+  PROJECT_ID=your_project_id
+  STORAGE_BUCKET=your_storage_bucket
+  MESSAGING_SENDER_ID=your_messaging_sender_id
+  APP_ID=your_app_id
+  SERVICE_ACCOUNT="path_to_firebase.json"
+  ```
 
-MONGO_URI=your_mongodb_uri
-JWT_TOKEN_SECRET=your_jwt_token_secret
-API_KEY=your_api_key
-AUTH_DOMAIN=your_auth_domain
-MEASUREMENT_ID=your_measurement_id
-PROJECT_ID=your_project_id
-STORAGE_BUCKET=your_storage_bucket
-MESSAGING_SENDER_ID=your_messaging_sender_id
-APP_ID=your_app_id
-SERVICE_ACCOUNT="path_to_firebase.json"
+````
 
 4. **Run the Server**:
+
+   ```bash
    npm start
+   ```
 
 5. **Documentation**:
    The API documentation (Swagger) can be accessed at /api/v1/docs
@@ -59,3 +67,4 @@ Authenticate requests using bearer tokens provided upon login.
 # Contributors
 
 - roqiaahmed
+````
