@@ -55,11 +55,16 @@ const updateService = async (req, res) => {
     name,
     details,
   };
-  const path = name;
-  const files = await uploadFiles(req, res, path);
-  if (files) {
-    const images = files.map((url) => url);
-    service.images = images;
+
+  if (req.files && req.files.length > 0) {
+    const files = await uploadFiles(req, res);
+    if (files) {
+      const images = files.map((url) => url);
+      service.images = images;
+    }
+  } else {
+    // If no files are attached, retain the existing files from oldService
+    service.images = oldService.images;
   }
 
   const updatedService = await Service.findByIdAndUpdate(serviceId, service, {

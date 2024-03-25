@@ -1,16 +1,16 @@
-const admin = require("firebase-admin");
+const admin = require('firebase-admin');
 
-const { URL } = require("url");
+const { URL } = require('url');
 
 function getFileNameFromUrl(fileUrl) {
   const parsedUrl = new URL(fileUrl);
   const pathname = parsedUrl.pathname;
   // Extract filename from the pathname
-  const filename = pathname.substring(pathname.lastIndexOf("/") + 1);
+  const filename = pathname.substring(pathname.lastIndexOf('/') + 1);
   return filename;
 }
 
-async function uploadFiles(req, res, folderPath) {
+async function uploadFiles(req, res) {
   try {
     if (!req.files || req.files.length === 0) {
       return;
@@ -19,9 +19,11 @@ async function uploadFiles(req, res, folderPath) {
     const bucket = admin.storage().bucket();
 
     const uploadPromises = req.files.map(async (file) => {
-      const filePath = `${folderPath}/${file.originalname}`; /////// add folder path
-      const fileUpload = bucket.file(filePath);
-      // const fileUpload = bucket.file(file.originalname);
+      const currentDate = new Date();
+      const fileName = `${currentDate.getTime()}-${file.originalname
+        .split(' ')
+        .join('_')}`;
+      const fileUpload = bucket.file(fileName);
 
       // Upload each file to Firebase Storage
       await fileUpload.save(file.buffer, {
@@ -31,8 +33,8 @@ async function uploadFiles(req, res, folderPath) {
       });
       // Generate download URL for the uploaded file
       const [url] = await fileUpload.getSignedUrl({
-        action: "read",
-        expires: "01-01-2025",
+        action: 'read',
+        expires: '01-01-2025',
       });
 
       return url;
@@ -41,21 +43,17 @@ async function uploadFiles(req, res, folderPath) {
     const urls = await Promise.all(uploadPromises);
     return urls;
   } catch (error) {
-    console.error("Error uploading files:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error('Error uploading files:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
 
-async function deleteFile(fileUrl, folderPath) {
+async function deleteFile(fileUrl) {
   const fileName = getFileNameFromUrl(fileUrl);
-
   try {
     const bucket = await admin.storage().bucket();
-    const filePath = `${folderPath}/${fileName}`;
-    await bucket.file(filePath).delete();
-    console.log(`File ${fileName} deleted successfully.`);
+    await bucket.file(fileName).delete();
   } catch (error) {
-    console.error(`Error deleting file ${fileName}:`, error);
     throw new Error(`Failed to delete file ${fileName}: ${error.message}`);
   }
 }
@@ -82,13 +80,13 @@ async function updateFile(file) {
 
     // Generate download URL for the uploaded file
     const [url] = await fileUpload.getSignedUrl({
-      action: "read",
-      expires: "01-01-2025",
+      action: 'read',
+      expires: '01-01-2025',
     });
 
     return url;
   } catch (error) {
-    console.error("Error uploading file:", error);
+    console.error('Error uploading file:', error);
     throw error; // Rethrow the error to handle it elsewhere
   }
 }
