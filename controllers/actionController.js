@@ -1,17 +1,17 @@
-const Action = require("../models/action");
-const Service = require("../models/Services");
-const Task = require("../models/task");
-const { uploadFiles, deleteFile } = require("../utils/uploadUtil");
-const { StatusCodes } = require("http-status-codes");
+const Action = require('../models/action');
+const Service = require('../models/Services');
+const Task = require('../models/task');
+const { uploadFiles, deleteFile } = require('../utils/uploadUtil');
+const { StatusCodes } = require('http-status-codes');
 
-const folderPath = async (req, res) => {
-  const service = await Service.findOne({ _id: req.params.serviceId });
-  const serviceName = service.name;
-  const task = await Task.findOne({ _id: req.params.taskId });
-  const taskName = task.name;
-  const folderPath = `${serviceName}/${taskName}`;
-  return folderPath;
-};
+// const folderPath = async (req, res) => {
+//   const service = await Service.findOne({ _id: req.params.serviceId });
+//   const serviceName = service.name;
+//   const task = await Task.findOne({ _id: req.params.taskId });
+//   const taskName = task.name;
+//   const folderPath = `${serviceName}/${taskName}`;
+//   return folderPath;
+// };
 
 const getAllActions = async (req, res) => {
   const { taskId } = req.params;
@@ -29,15 +29,13 @@ const getAllActions = async (req, res) => {
 
 const createAction = async (req, res) => {
   const { taskId } = req.params;
-  const status = req.body.status || "pending";
+  const status = req.body.status || 'pending';
   const newAction = {
     taskId,
     status,
   };
 
-  const path = await folderPath(req, res);
-
-  const files = await uploadFiles(req, res, path);
+  const files = await uploadFiles(req, res);
   if (files) {
     const images = files.map((url) => url);
     newAction.images = images;
@@ -48,27 +46,26 @@ const createAction = async (req, res) => {
 };
 
 const getAction = async (req, res) => {
-  const { taskId, actionId } = req.params;
-  const action = await Action.findOne({ _id: actionId, taskId });
+  const { actionId } = req.params;
+  const action = await Action.findOne({ _id: actionId });
   if (!action) {
-    return res.status(StatusCodes.NOT_FOUND).send("Action not found");
+    return res.status(StatusCodes.NOT_FOUND).send('Action not found');
   }
   res.status(StatusCodes.OK).json({ action });
 };
 
 const updateAction = async (req, res) => {
-  const { taskId, actionId } = req.params;
+  const { actionId } = req.params;
   const { status } = req.body;
-  const oldAction = await Action.findOne({ _id: actionId, taskId });
+  const oldAction = await Action.findOne({ _id: actionId });
   if (!oldAction) {
-    return res.status(StatusCodes.NOT_FOUND).send("Action not found");
+    return res.status(StatusCodes.NOT_FOUND).send('Action not found');
   }
   const action = {
     status,
   };
-  const path = await folderPath(req, res);
 
-  const files = await uploadFiles(req, res, path);
+  const files = await uploadFiles(req, res);
   if (files) {
     const images = files.map((url) => url);
     action.images = images;
@@ -81,20 +78,19 @@ const updateAction = async (req, res) => {
 };
 
 const deleteAction = async (req, res) => {
-  const { taskId, actionId } = req.params;
-  const action = await Action.findOne({ _id: actionId, taskId });
+  const { actionId } = req.params;
+  const action = await Action.findOne({ _id: actionId });
   if (!action) {
-    return res.status(StatusCodes.NOT_FOUND).send("Action not found");
+    return res.status(StatusCodes.NOT_FOUND).send('Action not found');
   }
 
   await Action.findByIdAndDelete(actionId);
   if (action.images && action.images.length > 0) {
-    const path = await folderPath(req, res);
     for (const imageUrl of action.images) {
-      await deleteFile(imageUrl, path);
+      await deleteFile(imageUrl);
     }
   }
-  res.status(StatusCodes.OK).send("Action deleted");
+  res.status(StatusCodes.OK).send('Action deleted');
 };
 
 module.exports = {

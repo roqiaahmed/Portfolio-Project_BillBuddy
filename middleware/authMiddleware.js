@@ -5,6 +5,7 @@ const {
   verifyProperty,
   verifyService,
   verifyTask,
+  verifyAction,
 } = require('../utils/verifyproperty');
 
 const verifyToken = (req, res, next) => {
@@ -24,7 +25,7 @@ const verifyToken = (req, res, next) => {
 };
 
 const authorized = async (req, res, next) => {
-  const { propertyId, serviceId, taskId } = req.params;
+  const { propertyId, serviceId, taskId, actionId } = req.params;
   const { userId } = req;
 
   if (propertyId) {
@@ -46,6 +47,14 @@ const authorized = async (req, res, next) => {
   if (taskId) {
     const task = await verifyTask(userId, taskId);
     if (!task) {
+      throw new UnauthenticatedError('Not authorized to access this route');
+    }
+    return next();
+  }
+
+  if (actionId) {
+    const action = await verifyAction(userId, actionId);
+    if (!action) {
       throw new UnauthenticatedError('Not authorized to access this route');
     }
     return next();

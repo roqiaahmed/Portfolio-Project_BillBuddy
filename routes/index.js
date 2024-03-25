@@ -97,14 +97,12 @@ router
 
 // action.js
 router
-  .route('/properties/:propertyId/services/:serviceId/tasks/:taskId/actions')
+  .route('/tasks/:taskId/actions')
   .get(verifyToken, authorized, getAllActions)
   .post(verifyToken, authorized, uploadMiddleware, createAction);
 
 router
-  .route(
-    '/properties/:propertyId/services/:serviceId/tasks/:taskId/actions/:actionId'
-  )
+  .route('/actions/:actionId')
   .get(verifyToken, authorized, getAction)
   .put(verifyToken, authorized, uploadMiddleware, updateAction)
   .delete(verifyToken, authorized, deleteAction);
