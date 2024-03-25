@@ -1,7 +1,11 @@
 const jwt = require('jsonwebtoken');
 
 const { UnauthenticatedError } = require('../errors/index');
-const { verifyProperty, verifyService } = require('../utils/verifyproperty');
+const {
+  verifyProperty,
+  verifyService,
+  verifyTask,
+} = require('../utils/verifyproperty');
 
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization;
@@ -20,7 +24,7 @@ const verifyToken = (req, res, next) => {
 };
 
 const authorized = async (req, res, next) => {
-  const { propertyId, serviceId } = req.params;
+  const { propertyId, serviceId, taskId } = req.params;
   const { userId } = req;
 
   if (propertyId) {
@@ -34,6 +38,14 @@ const authorized = async (req, res, next) => {
   if (serviceId) {
     const service = await verifyService(userId, serviceId);
     if (!service) {
+      throw new UnauthenticatedError('Not authorized to access this route');
+    }
+    return next();
+  }
+
+  if (taskId) {
+    const task = await verifyTask(userId, taskId);
+    if (!task) {
       throw new UnauthenticatedError('Not authorized to access this route');
     }
     return next();
