@@ -322,8 +322,7 @@ router
  *         schema:
  *           type: array
  *           items:
- *             type: string
- *             format: binary
+ *             type: file
  *         required: true
  *         description: The files
  *     responses:
@@ -385,8 +384,7 @@ router
  *         schema:
  *           type: array
  *           items:
- *             type: string
- *             format: binary
+ *             type: file
  *         required: true
  *         description: The files
  *     responses:
@@ -592,8 +590,7 @@ router
  *         schema:
  *           type: array
  *           items:
- *             type: string
- *             format: binary
+ *             type: file
  *         required: true
  *         description: The files
  *     responses:
@@ -649,8 +646,7 @@ router
  *         schema:
  *           type: array
  *           items:
- *             type: string
- *             format: binary
+ *             type: file
  *         required: false
  *         description: The files to update for the action
  *     responses:
