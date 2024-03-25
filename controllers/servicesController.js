@@ -1,7 +1,7 @@
-const Service = require("../models/Services");
-const Task = require("../models/task");
-const { uploadFiles, deleteFile } = require("../utils/uploadUtil");
-const { StatusCodes } = require("http-status-codes");
+const Service = require('../models/Services');
+const Task = require('../models/task');
+const { uploadFiles, deleteFile } = require('../utils/uploadUtil');
+const { StatusCodes } = require('http-status-codes');
 
 const getAllServices = async (req, res) => {
   const propertyId = req.params.propertyId;
@@ -24,8 +24,7 @@ const createService = async (req, res) => {
     name,
     details,
   };
-  const path = name;
-  const files = await uploadFiles(req, res, path);
+  const files = await uploadFiles(req, res);
   if (files) {
     const images = files.map((url) => url);
     newService.images = images;
@@ -36,21 +35,21 @@ const createService = async (req, res) => {
 };
 
 const getService = async (req, res) => {
-  const { propertyId, serviceId } = req.params;
+  const { serviceId } = req.params;
 
-  const service = await Service.findOne({ _id: serviceId, propertyId });
+  const service = await Service.findOne({ _id: serviceId });
   if (!service) {
-    return res.status(StatusCodes.NOT_FOUND).send("Service not found");
+    return res.status(StatusCodes.NOT_FOUND).send('Service not found');
   }
   res.status(StatusCodes.OK).json({ service });
 };
 
 const updateService = async (req, res) => {
-  const { propertyId, serviceId } = req.params;
+  const { serviceId } = req.params;
   const { name, details } = req.body;
-  const oldService = await Service.findOne({ _id: serviceId, propertyId });
+  const oldService = await Service.findOne({ _id: serviceId });
   if (!oldService) {
-    return res.status(StatusCodes.NOT_FOUND).send("Service not found");
+    return res.status(StatusCodes.NOT_FOUND).send('Service not found');
   }
   const service = {
     name,
@@ -71,29 +70,27 @@ const updateService = async (req, res) => {
 };
 
 const deleteService = async (req, res) => {
-  const { propertyId, serviceId } = req.params;
+  const { serviceId } = req.params;
 
   const service = await Service.findOne({
     _id: serviceId,
-    propertyId,
   });
   if (!service) {
-    return res.status(StatusCodes.NOT_FOUND).send("Service not found");
+    return res.status(StatusCodes.NOT_FOUND).send('Service not found');
   }
   const tasksCount = await Task.countDocuments({ serviceId });
   if (tasksCount > 0) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "Cannot delete service with associated tasks." });
+      .json({ msg: 'Cannot delete service with associated tasks.' });
   }
   if (service.images && service.images.length > 0) {
     service.images.forEach(async (image) => {
-      const path = service.name;
-      await deleteFile(image, path);
+      await deleteFile(image);
     });
   }
   await service.deleteOne({ _id: serviceId });
-  res.status(StatusCodes.OK).json({ msg: "Service deleted" });
+  res.status(StatusCodes.OK).json({ msg: 'Service deleted' });
 };
 
 module.exports = {

@@ -1,4 +1,5 @@
-const Property = require("../models/property");
+const Property = require('../models/property');
+const Service = require('../models/Services');
 
 const verifyProperty = async (userId, propertyId) => {
   const property = await Property.findById(propertyId);
@@ -8,4 +9,11 @@ const verifyProperty = async (userId, propertyId) => {
   return true;
 };
 
-module.exports = verifyProperty;
+const verifyService = async (userId, serviceId) => {
+  const service = await Service.findById(serviceId);
+  const propertyId = await Property.findById(service.propertyId).select('_id');
+  const verifyproperty = await verifyProperty(userId, propertyId);
+  return verifyproperty;
+};
+
+module.exports = { verifyProperty, verifyService };
