@@ -49,12 +49,6 @@ const createTask = async (req, res) => {
   const reminde = req.body.reminde === undefined ? true : req.body.reminde;
   const reminderDay = req.body.reminderDay || 1;
   let job = null;
-  if (reminde) {
-    job = cron.schedule(`*/${reminderDay} * * * *`, () => {
-      sendNotification(req.userId, `${serviceName} - ${name}`);
-    });
-    job.start();
-  }
   const newTask = await Task.create({
     serviceId,
     name,
@@ -62,7 +56,22 @@ const createTask = async (req, res) => {
     reminderDay,
     jobId: job ? job.options.name : null,
   });
-  res.send({ newTask });
+  if (reminde) {
+    job = cron.schedule(`*/${reminderDay} * * * * *`, async () => {
+      const newAction = {
+        status: 'pending',
+        taskId: newTask._id,
+      };
+      const action = await Action.create(newAction);
+
+      sendNotification(req.userId, `${serviceName} - ${name} - ${action._id}`);
+    });
+    job.start();
+  }
+  const updateTask = await Task.findByIdAndUpdate(newTask._id, {
+    jobId: job.options.name,
+  });
+  res.send({ task: updateTask });
 };
 const getTask = async (req, res) => {
   const { taskId } = req.params;
@@ -92,8 +101,14 @@ const updateTask = async (req, res) => {
     jobId: oldTask.jobId,
   };
   if (reminde) {
-    const job = cron.schedule(`*/${reminderDay} * * * *`, () => {
-      sendNotification(req.userId, `${serviceName} - ${name}`);
+    const job = cron.schedule(`*/${reminderDay} * * * * *`, async () => {
+      const newAction = {
+        status: 'pending',
+        taskId: oldTask._id,
+      };
+      const action = await Action.create(newAction);
+
+      sendNotification(req.userId, `${serviceName} - ${name} - ${action._id}`);
     });
     if (oldTask.jobId) {
       cron.getTasks().forEach((task) => {
