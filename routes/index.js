@@ -166,10 +166,21 @@ router
  *     description: Retrieve the properties of the authenticated user.
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: Filter properties by name
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         description: Page number for pagination
  *     responses:
  *       200:
  *         description: Successful response with the user's properties.
- *
  *   post:
  *     summary: Create a new property
  *     description: Create a new property for the authenticated user.
@@ -189,7 +200,7 @@ router
  *                 example: My Property name
  *               info:
  *                 type: string
- *                 example: info info info info info info
+ *                 example: create new Property
  *
  *     responses:
  *       200:
@@ -288,6 +299,11 @@ router
  *           type: string
  *         required: true
  *         description: ID of the property
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: Filter services by name
  *     responses:
  *       200:
  *         description: Successful response with the list of services.
@@ -429,6 +445,22 @@ router
  *           type: string
  *         required: true
  *         description: ID of the service
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: Filter tasks by name
+ *       - in: query
+ *         name: reminde
+ *         schema:
+ *           type: string
+ *         description: Filter tasks by reminde
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         description: Page number for pagination
  *     responses:
  *       200:
  *         description: Successful response with the list of tasks.
@@ -561,6 +593,11 @@ router
  *           type: string
  *         required: true
  *         description: ID of the task
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *         description: Filter properties by status
  *     responses:
  *       200:
  *         description: Successful response with the list of actions.
