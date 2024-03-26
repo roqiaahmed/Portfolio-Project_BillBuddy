@@ -8,6 +8,10 @@ const register = async (req, res) => {
   if (!email || !password || !name) {
     throw new BadRequestError('Please provide name, email and password');
   }
+  const user = await User.findOne({ email });
+  if (user) {
+    throw new BadRequestError('duplicate email');
+  }
   await User.create({ email, password, name });
   res.status(StatusCodes.CREATED).json({ msg: 'User created' });
 };
