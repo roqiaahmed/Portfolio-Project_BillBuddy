@@ -68,10 +68,10 @@ const uploadMiddleware = require('../middleware/uploadMiddelware');
  *             properties:
  *               name:
  *                 type: string
- *                 example: john doe
+ *                 example: Rokia Ahmed
  *               email:
  *                 type: string
- *                 example: john@example.com
+ *                 example: rokia@example.com
  *               password:
  *                 type: string
  *                 example: password123
@@ -96,7 +96,7 @@ router.post('/register', register);
  *             properties:
  *               email:
  *                 type: string
- *                 example: john@example.com
+ *                 example: rokia@example.com
  *               password:
  *                 type: string
  *                 example: password123
@@ -132,10 +132,10 @@ router.post('/login', login);
  *             properties:
  *               name:
  *                 type: string
- *                 example: John
+ *                 example: Roqia
  *               email:
  *                 type: string
- *                 example: Doe
+ *                 example: roqia
  *               password:
  *                 type: string
  *                 example: password123
@@ -186,7 +186,7 @@ router
  *             properties:
  *               name:
  *                 type: string
- *                 example: My Property
+ *                 example: My Property name
  *               info:
  *                 type: string
  *                 example: info info info info info info
@@ -306,25 +306,25 @@ router
  *         required: true
  *         description: ID of the property
  *       - in: formData
- *         name: name
- *         schema:
- *           type: string
- *         required: true
- *         description: name of the service
- *       - in: formData
- *         name: details
- *         schema:
- *           type: string
- *         required: false
- *         description: the remarks
- *       - in: formData
- *         name: images[]
+ *         name: images
  *         schema:
  *           type: array
  *           items:
  *             type: file
- *         required: true
+ *         required: false
  *         description: The files
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Updated services Name
+ *               details:
+ *                 type: string
+ *                 example: Updated services details
  *     responses:
  *       200:
  *         description: Successful response with the newly created service.
@@ -368,25 +368,25 @@ router
  *           format: objectId
  *           example: 60ba77c9b8e9a43d48deed85
  *       - in: formData
- *         name: name
- *         schema:
- *           type: string
- *         required: true
- *         description: name of the service
- *       - in: formData
- *         name: details
- *         schema:
- *           type: string
- *         required: false
- *         description: the remarks
- *       - in: formData
  *         name: images[]
  *         schema:
  *           type: array
  *           items:
  *             type: file
- *         required: true
+ *         required: false
  *         description: The files
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Updated services Name
+ *               details:
+ *                 type: string
+ *                 example: Updated services details
  *     responses:
  *       200:
  *         description: Successful response with the updated property.
@@ -586,12 +586,12 @@ router
  *           default: 'pending'
  *         description: Status of the action
  *       - in: formData
- *         name: images[]
+ *         name: images
  *         schema:
  *           type: array
  *           items:
  *             type: file
- *         required: true
+ *         required: false
  *         description: The files
  *     responses:
  *       200:
