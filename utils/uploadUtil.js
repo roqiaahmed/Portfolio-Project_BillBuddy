@@ -31,10 +31,14 @@ async function uploadFiles(req, res) {
           contentType: file.mimetype,
         },
       });
+      //expire after one year
+      const aYearFromNow = new Date();
+      aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
+
       // Generate download URL for the uploaded file
       const [url] = await fileUpload.getSignedUrl({
         action: 'read',
-        expires: '01-01-2025',
+        expires: aYearFromNow,
       });
 
       return url;
@@ -58,41 +62,7 @@ async function deleteFile(fileUrl) {
   }
 }
 
-async function updateFile(file) {
-  try {
-    const bucket = admin.storage().bucket();
-    const fileUpload = bucket.file(file.originalname);
-
-    // Delete existing file if it exists
-    await fileUpload.delete().catch((error) => {
-      // Ignore "Not Found" error if file doesn't exist
-      if (error.code !== 404) {
-        throw error;
-      }
-    });
-
-    // Upload new file to Firebase Storage
-    await fileUpload.save(file.buffer, {
-      metadata: {
-        contentType: file.mimetype,
-      },
-    });
-
-    // Generate download URL for the uploaded file
-    const [url] = await fileUpload.getSignedUrl({
-      action: 'read',
-      expires: '01-01-2025',
-    });
-
-    return url;
-  } catch (error) {
-    console.error('Error uploading file:', error);
-    throw error; // Rethrow the error to handle it elsewhere
-  }
-}
-
 module.exports = {
   uploadFiles,
   deleteFile,
-  updateFile,
 };
